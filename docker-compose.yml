@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+ file_Service:
+    privileged: true
+    image: file_service
+    container_name: file_service
+    build:
+      context: .
+      dockerfile: ./FileService/Dockerfile
+    restart: on-failure
+    environment:
+      FILES_PATH: ${FILES_PATH}
+      FILE_SERVICE_PORT: ${FILE_SERVICE_PORT}
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE}
+    volumes:
+      - files_vol:${FILES_PATH}
+    networks:
+      - network
+    ports:
+      - ${FILE_SERVICE_PORT}:${FILE_SERVICE_PORT}
+networks:
+  network:
+    driver: bridge
+volumes:
+  files_vol:
