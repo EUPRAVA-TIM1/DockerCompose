@@ -19,8 +19,55 @@ services:
       - network
     ports:
       - ${FILE_SERVICE_PORT}:${FILE_SERVICE_PORT}
+ e_uparava_sso:
+    image: e_uparava_sso
+    container_name: e_uparava_sso
+    build:
+      context: .
+      dockerfile: ./SSOService/Dockerfile
+    restart: always
+    ports: 
+       - ${SSO_SERVICE_PORT}:${SSO_SERVICE_PORT}
+    environment:
+      SSO_REDIS_HOST: ${SSO_REDIS_HOST}
+      SSO_REDIS_PORT: ${SSO_REDIS_PORT}
+      SSO_SERVICE_PORT: ${SSO_SERVICE_PORT}
+      SSO_SERVICE_HOST: ${SSO_SERVICE_HOST}
+      SSO_MYSQL_PORT: ${SSO_MYSQL_PORT}
+      SSO_MYSQL_HOST: ${SSO_MYSQL_HOST}
+      SSO_MYSQL_ROOT_PASSWORD: ${SSO_MYSQL_ROOT_PASSWORD}
+    networks:
+      - network
+    depends_on:
+      - sso_redis
+      - sso_mysql
+ sso_redis:
+    image: redis
+    restart: on-failure
+    ports:
+      - ${SSO_REDIS_PORT}:6379
+    command: "redis-server --save 20 1 --loglevel warning"
+    volumes:
+      - sso_redis_vol:/data
+    networks:
+      - network
+ sso_mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${SSO_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: "eupravaSSO"
+    volumes:
+      - sso_mysql_vol:/var/lib/mysql
+      - ./SSOService/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 3307:${SSO_MYSQL_PORT}
+    networks:
+      - network
 networks:
   network:
     driver: bridge
 volumes:
   files_vol:
+  sso_redis_vol:
+  sso_mysql_vol:
