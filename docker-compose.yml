@@ -64,6 +64,19 @@ services:
       - 3307:${SSO_MYSQL_PORT}
     networks:
       - network
+ sso_react:
+    restart: always
+    container_name: sso_react
+    build:
+        context: ./SSOServiceFront
+        dockerfile: ./Dockerfile
+    networks:
+      - network
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./SSOServiceFront/src:/src
+      - ./SSOServiceFront/public:/public
  euprava_mup:
   build:
    context: .
@@ -109,6 +122,7 @@ services:
     - euprava_mup_vol:/var/lib/mysql/
   networks:
     - network
+
 networks:
   network:
     driver: bridge
