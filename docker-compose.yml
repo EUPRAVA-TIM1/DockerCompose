@@ -65,18 +65,18 @@ services:
     networks:
       - network
  sso_react:
-    restart: always
-    container_name: sso_react
-    build:
-        context: ./SSOServiceFront
-        dockerfile: ./Dockerfile
-    networks:
-      - network
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./SSOServiceFront/src:/src
-      - ./SSOServiceFront/public:/public
+   restart: always
+   container_name: sso_react
+   build:
+     context: ./SSOServiceFront
+     dockerfile: ./Dockerfile
+   networks:
+     - network
+   ports:
+     - "3000:3000"
+   volumes:
+     - ./SSOServiceFront/src:/src
+     - ./SSOServiceFront/public:/public
  euprava_mup:
   build:
    context: .
@@ -120,6 +120,7 @@ services:
     SERVICE_TAGS: dev
   volumes:
     - euprava_mup_vol:/var/lib/mysql/
+    - ./euprava-mup/database/init.sql:/docker-entrypoint-initdb.d/init.sql
   networks:
     - network
 
