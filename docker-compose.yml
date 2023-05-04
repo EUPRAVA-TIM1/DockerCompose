@@ -77,6 +77,32 @@ services:
    volumes:
      - ./SSOServiceFront/src:/src
      - ./SSOServiceFront/public:/public
+ sso_react:
+   restart: always
+   container_name: sso_react
+   build:
+     context: ./SSOServiceFront
+     dockerfile: ./Dockerfile
+   networks:
+     - network
+   ports:
+     - "3000:3000"
+   volumes:
+     - ./SSOServiceFront/src:/src
+     - ./SSOServiceFront/public:/public
+ saobracjana_react:
+   restart: always
+   container_name: saobracjana_react
+   build:
+     context: ./SaobracjanaFront
+     dockerfile: ./Dockerfile
+   networks:
+     - network
+   ports:
+     - "3001:3000"
+   volumes:
+     - ./SaobracjanaFront/src:/src
+     - ./SaobracjanaFront/public:/public
  euprava_mup:
   build:
    context: .
