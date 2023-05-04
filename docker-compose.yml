@@ -103,33 +103,34 @@ services:
    volumes:
      - ./SaobracjanaFront/src:/src
      - ./SaobracjanaFront/public:/public
- euprava_mup:
-  build:
-   context: .
-   dockerfile: ./euprava-mup/Dockerfile
-  image: euprava-mup
-  container_name: euprava-mup
-  restart: unless-stopped
-  volumes:
-    - .:/euprava-mup
-  environment:
-    MYSQL_DATABASE: ${MUP_DATABASE}
-    MYSQL_USER: ${MUP_USER}
-    MYSQL_PASSWORD: ${MUP_ROOT_PASSWORD}
-    MYSQL_ROOT_PASSWORD: ${MUP_ROOT_PASSWORD}
-    SERVICE_NAME: app
-    SERVICE_TAGS: dev
-  depends_on:
-    - euprava_mup_db
-  ports:
-    - ${MUP_PORT}:8000
-  networks:
-    - network
-  healthcheck:
-    test: [ "CMD", "php", "-v" ]
-    interval: 30s
-    timeout: 10s
-    retries: 5
+  euprava_mup:
+    build:
+      context: .
+      dockerfile: ./euprava-mup/Dockerfile
+    image: euprava-mup
+    container_name: euprava-mup
+    restart: unless-stopped
+    volumes:
+      - .:/euprava-mup
+    environment:
+      MYSQL_DATABASE: ${MUP_DATABASE}
+      MYSQL_USER: ${MUP_USER}
+      MYSQL_PASSWORD: ${MUP_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MUP_ROOT_PASSWORD}
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    depends_on:
+      - euprava_mup_db
+    ports:
+      - ${MUP_PORT}:3003
+      - ${VITE_PORT}:5173
+    networks:
+      - network
+    healthcheck:
+      test: [ "CMD", "php", "-v" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
  euprava_mup_db:
   image: mysql:8
   container_name: euprava_mup_db
