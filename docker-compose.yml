@@ -77,19 +77,6 @@ services:
    volumes:
      - ./SSOServiceFront/src:/src
      - ./SSOServiceFront/public:/public
- sso_react:
-   restart: always
-   container_name: sso_react
-   build:
-     context: ./SSOServiceFront
-     dockerfile: ./Dockerfile
-   networks:
-     - network
-   ports:
-     - "3000:3000"
-   volumes:
-     - ./SSOServiceFront/src:/src
-     - ./SSOServiceFront/public:/public
  saobracjana_react:
    restart: always
    container_name: saobracjana_react
@@ -103,7 +90,42 @@ services:
    volumes:
      - ./SaobracjanaFront/src:/src
      - ./SaobracjanaFront/public:/public
-  euprava_mup:
+ e_uprava_saobracjana:
+    image: e_uprava_saobracjana
+    container_name: e_uprava_saobracjana
+    build:
+      context: .
+      dockerfile: ./Euprava-saobracajna/Dockerfile
+    restart: always
+    ports: 
+       - ${SAOBRACAJNA_SERVICE_PORT}:${SAOBRACAJNA_SERVICE_PORT}
+    environment:
+       - SAOBRACAJNA_ISSUER_KEY:${SAOBRACAJNA_ISSUER_KEY}
+       - SAOBRACAJNA_SERVICE_PORT:${SAOBRACAJNA_SERVICE_PORT}
+       - SAOBRACAJNA_SERVICE_HOST:${SAOBRACAJNA_SERVICE_HOST}
+       - SAOBRACAJNA_MYSQL_HOST:${SAOBRACAJNA_MYSQL_HOST}
+       - SAOBRACAJNA_MYSQL_ROOT_PASSWORD:${SAOBRACAJNA_MYSQL_ROOT_PASSWORD}
+       - SAOBRACAJNA_MYSQL_PORT:${SAOBRACAJNA_MYSQL_PORT}
+    networks:
+      - network
+    depends_on:
+      - saobracajna_mysql
+ saobracajna_mysql:
+    image: mysql
+    restart: always
+    container_name: saobracajna_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${SAOBRACAJNA_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: "eupravaMilicija"
+      SERVICE_NAME: ${SAOBRACAJNA_MYSQL_HOST}
+    volumes:
+      - saobracajna_mysql_vol:/var/lib/mysql
+      - ./Euprava-saobracajna/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 3309:${SAOBRACAJNA_MYSQL_PORT}
+    networks:
+      - network
+ euprava_mup:
     build:
       context: .
       dockerfile: ./euprava-mup/Dockerfile
@@ -159,3 +181,4 @@ volumes:
   sso_redis_vol:
   sso_mysql_vol:
   euprava_mup_vol:
+  saobracajna_mysql_vol:
