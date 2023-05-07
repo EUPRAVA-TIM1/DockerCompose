@@ -108,6 +108,10 @@ services:
        SAOBRACAJNA_MYSQL_PORT: ${SAOBRACAJNA_MYSQL_PORT}
        SSO_SERVICE_PORT: ${SSO_SERVICE_PORT}
        SSO_SERVICE_HOST: ${SSO_SERVICE_HOST}
+       MUP_HOST: ${MUP_HOST}
+       MUP_PORT: ${MUP_PORT}
+       SUD_SERVICE_PORT: "test"
+       SUD_SERVICE_HOST: "test"
     networks:
       - network
     depends_on:
