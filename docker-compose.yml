@@ -2,7 +2,6 @@ version: "3.8"
 
 services:
  file_service:
-    privileged: true
     image: file_service
     container_name: file_service
     build:
@@ -110,6 +109,8 @@ services:
        SSO_SERVICE_HOST: ${SSO_SERVICE_HOST}
        MUP_HOST: ${MUP_HOST}
        MUP_PORT: ${MUP_PORT}
+       FILE_SERVICE_PORT: ${FILE_SERVICE_PORT}
+       FILE_SERVICE_HOST: ${FILE_SERVICE_HOST}
        SUD_SERVICE_PORT: "test"
        SUD_SERVICE_HOST: "test"
     networks:
