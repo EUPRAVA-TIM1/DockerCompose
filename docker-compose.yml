@@ -111,8 +111,8 @@ services:
        MUP_PORT: ${MUP_PORT}
        FILE_SERVICE_PORT: ${FILE_SERVICE_PORT}
        FILE_SERVICE_HOST: ${FILE_SERVICE_HOST}
-       SUD_SERVICE_PORT: "test"
-       SUD_SERVICE_HOST: "test"
+       SUD_PORT: ${SUD_PORT}
+       SUD_SERVICE_HOST: ${SUD_SERVICE_HOST}
     networks:
       - network
     depends_on:
@@ -180,6 +180,51 @@ services:
   networks:
     - network
 
+ euprava_sud:
+    build:
+      context: .
+      dockerfile: ./euprava-sud/euprava-sud/Dockerfile
+    image: euprava-sud
+    container_name: euprava-sud
+    restart: unless-stopped
+    volumes:
+      - .:/euprava-sud
+    environment:
+      MYSQL_DATABASE: ${SUD_DATABASE}
+      MYSQL_USER: ${SUD_USER}
+      SUD_MYSQL_HOST: ${SUD_MYSQL_HOST}
+      MYSQL_PASSWORD: ${SUD_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${SUD_ROOT_PASSWORD}
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    depends_on:
+      - sudDb
+    ports:
+      - ${SUD_PORT}:8003
+    networks:
+      - network
+    healthcheck:
+      test: [ "CMD", "php", "-v" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+ sudDb:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sudDb
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 5533:1433
+    environment:
+      SERVICE_NAME: euprava_sud_database
+      SERVICE_TAGS: dev
+      SA_PASSWORD: "S3cur3P@ssW0rd!"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - euprava_sud_vol:/var/lib/sql/
+    networks:
+      - network
+
 networks:
   network:
     driver: bridge
@@ -188,4 +233,5 @@ volumes:
   sso_redis_vol:
   sso_mysql_vol:
   euprava_mup_vol:
+  euprava_sud_vol:
   saobracajna_mysql_vol:
