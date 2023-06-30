@@ -132,53 +132,52 @@ services:
       - 3309:${SAOBRACAJNA_MYSQL_PORT}
     networks:
       - network
-# euprava_mup:
-#    build:
-#      context: .
-#      dockerfile: ./euprava-mup/Dockerfile
-#    image: euprava-mup
-#    container_name: euprava-mup
-#    restart: unless-stopped
-#    volumes:
-#      - .:/euprava-mup
-#    environment:
-#      MYSQL_DATABASE: ${MUP_DATABASE}
-#      MYSQL_USER: ${MUP_USER}
-#      MYSQL_PASSWORD: ${MUP_ROOT_PASSWORD}
-#      MYSQL_ROOT_PASSWORD: ${MUP_ROOT_PASSWORD}
-#      SERVICE_NAME: app
-#      SERVICE_TAGS: dev
-#    depends_on:
-#      - euprava_mup_db
-#    ports:
-#      - ${MUP_PORT}:3003
-#      - ${VITE_PORT}:5173
-#    networks:
-#      - network
-#    healthcheck:
-#      test: [ "CMD", "php", "-v" ]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 5
-# euprava_mup_db:
-#  image: mysql:8
-#  container_name: euprava_mup_db
-#  restart: unless-stopped
-#  tty: true
-#  ports:
-#    - ${MUP_MYSQL_PORT}:3306
-#  environment:
-#    MYSQL_DATABASE: ${MUP_DATABASE}
-#    MYSQL_USER: ${MUP_USER}
-#    MYSQL_PASSWORD: ${MUP_ROOT_PASSWORD}
-#    MYSQL_ROOT_PASSWORD: ${MUP_ROOT_PASSWORD}
-#    SERVICE_NAME: euprava_mup_database
-#    SERVICE_TAGS: dev
-#  volumes:
-#    - euprava_mup_vol:/var/lib/mysql/
-#    - ./euprava-mup/database/init.sql:/docker-entrypoint-initdb.d/init.sql
-#  networks:
-#    - network
+ euprava_mup:
+    build:
+      context: .
+      dockerfile: ./euprava-mup/Dockerfile
+    image: euprava-mup
+    container_name: euprava-mup
+    restart: unless-stopped
+    volumes:
+      - .:/euprava-mup
+    environment:
+      MYSQL_DATABASE: ${MUP_DATABASE}
+      MYSQL_USER: ${MUP_USER}
+      MYSQL_PASSWORD: ${MUP_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MUP_ROOT_PASSWORD}
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    depends_on:
+      - euprava_mup_db
+    ports:
+      - ${MUP_PORT}:3003
+    networks:
+      - network
+    healthcheck:
+      test: [ "CMD", "php", "-v" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+ euprava_mup_db:
+  image: mysql:8
+  container_name: euprava_mup_db
+  restart: unless-stopped
+  tty: true
+  ports:
+    - ${MUP_MYSQL_PORT}:3306
+  environment:
+    MYSQL_DATABASE: ${MUP_DATABASE}
+    MYSQL_USER: ${MUP_USER}
+    MYSQL_PASSWORD: ${MUP_ROOT_PASSWORD}
+    MYSQL_ROOT_PASSWORD: ${MUP_ROOT_PASSWORD}
+    SERVICE_NAME: euprava_mup_database
+    SERVICE_TAGS: dev
+  volumes:
+    - euprava_mup_vol:/var/lib/mysql/
+    - ./euprava-mup/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+  networks:
+    - network
 
  euprava_sud:
     build:
@@ -224,6 +223,19 @@ services:
       - euprava_sud_vol:/var/lib/sql/
     networks:
       - network
+ sud_react:
+   restart: always
+   container_name: sud_react
+   build:
+     context: ./SudFront
+     dockerfile: ./Dockerfile
+   networks:
+     - network
+   ports:
+     - "3002:3000"
+   volumes:
+     - ./SudFront/src:/src
+     - ./SudFront/public:/public
 
 networks:
   network:
